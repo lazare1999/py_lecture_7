@@ -80,4 +80,42 @@ async def get_model(model_name: ModelName):
     return {"model_name": model_name, "message": "Have some residuals"}
 
 
+# payments
+class Payment(BaseModel):
+    date: str
+    amount: float
+    ReceiverAcc: str
+    description: Optional[str] = None
 
+
+Payments = {}
+
+
+@app.get("/payments")
+def read_payments():
+    return Payments
+
+
+@app.get("/payments/{payment_id}")
+def read_payment(payment_id: int):
+    return Payments.get(payment_id)
+
+
+@app.put("/payments/{payment_id}")
+def update_payment(payment_id: int, payment: Payment):
+    Payments[payment_id] = payment.dict()
+    return payment.dict()
+
+
+@app.delete("/payments/{payment_id}")
+def delete_payment(payment_id: int):
+    if Payments[payment_id]:
+        Payments.pop(payment_id)
+        return {"ok": True}
+    return {"ok": False}
+
+
+@app.post("/payments")
+async def payments():
+    return Payments
+# payments
